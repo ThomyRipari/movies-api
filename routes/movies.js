@@ -26,8 +26,25 @@ function moviesRouter(app) {
 		}
 	})
 
+	router.get('/:id', async (req, res, next) => {
+		const { id } = req.params
+
+		try {
+			const movie = await Movies.getMovie(id)
+
+			res.status(200).json({
+				data: movie,
+				message: 'Movie Retrieved'
+			})
+		}
+
+		catch(err) {
+			next(err)
+		}
+	})
+
 	router.post('/', async (req, res, next) => {
-		const { movie } = req.body
+		const { body: movie } = req
 
 		try {
 			const movie_id = await Movies.createMovie(movie)
@@ -61,6 +78,41 @@ function moviesRouter(app) {
 			next(err)
 		}
 	})
+
+	router.delete('/:id', async (req, res, next) => {
+		const { id } = req.params
+
+		try {
+			const movie_deleted = await Movies.deleteMovie(id)
+
+			res.status(200).json({
+				data: movie_deleted,
+				message: 'Movie Deleted'
+			})
+		}
+
+		catch(err) {
+			next(err)
+		}
+	})
+
+	/* router.patch('/:id', async (req, res, next) => {
+		const { id } = req.params
+		const { body: movie } = req
+
+		try {
+			const movie_patched = await Movies.patchMovie(id, movie)
+
+			res.status(200).json({
+				data: movie_patched,
+				message: 'Movie Patched'
+			})
+		}
+
+		catch(err) {
+			next(err)
+		}
+	}) */
 
 }
 
