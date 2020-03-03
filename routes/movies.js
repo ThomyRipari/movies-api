@@ -3,6 +3,11 @@ const express = require('express')
 /* Service */
 const MoviesService = require('../services/movies')
 
+/* Req Schema Validators */
+const { movieIdSchema, createMovieSchema, updateMovieSchema } = require("../utils/schemas/movies")
+
+const validationHandler = require("../utils/middlewares/validationHandler")
+
 function moviesRouter(app) {
 	const router = express.Router()
 	app.use('/api/movies', router)
@@ -26,7 +31,7 @@ function moviesRouter(app) {
 		}
 	})
 
-	router.get('/:id', async (req, res, next) => {
+	router.get('/:id', validationHandler({id: movieIdSchema}, "params"), async (req, res, next) => {
 		const { id } = req.params
 
 		try {
@@ -43,7 +48,7 @@ function moviesRouter(app) {
 		}
 	})
 
-	router.post('/', async (req, res, next) => {
+	router.post('/', validationHandler(createMovieSchema), async (req, res, next) => {
 		const { body: movie } = req
 
 		try {
@@ -61,9 +66,14 @@ function moviesRouter(app) {
 
 	})
 
-	router.put('/:id', async (req, res, next) => {
+	router.patch(
+		'/:id', 
+		validationHandler({id: movieIdSchema}, "params"), 
+		validationHandler(updateMovieSchema), 
+		async (req, res, next) => {
+
 		const { id } = req.params
-		const { movie } = req.body
+		const { body: movie } = req
 
 		try {
 			const movie_id = await Movies.updateMovie(id, movie)
@@ -79,7 +89,7 @@ function moviesRouter(app) {
 		}
 	})
 
-	router.delete('/:id', async (req, res, next) => {
+	router.delete('/:id', validationHandler({id: movieIdSchema}, "params"), async (req, res, next) => {
 		const { id } = req.params
 
 		try {
@@ -95,24 +105,6 @@ function moviesRouter(app) {
 			next(err)
 		}
 	})
-
-	/* router.patch('/:id', async (req, res, next) => {
-		const { id } = req.params
-		const { body: movie } = req
-
-		try {
-			const movie_patched = await Movies.patchMovie(id, movie)
-
-			res.status(200).json({
-				data: movie_patched,
-				message: 'Movie Patched'
-			})
-		}
-
-		catch(err) {
-			next(err)
-		}
-	}) */
 
 }
 

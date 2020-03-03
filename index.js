@@ -6,14 +6,17 @@ const { config } = require('./config')
 const moviesRouter = require('./routes/movies')
 
 /* Error Middlewares */
-const { logErrors, errorHandler } = require('./utils/middlewares/errorHandlers')
+const { logErrors, errorHandler, wrapError } = require('./utils/middlewares/errorHandlers')
+const notFoundHandler = require('./utils/middlewares/notFoundHandler')
 
 const app = express()
 app.use(bodyParser.json())
 
 moviesRouter(app)
+app.use(notFoundHandler)
 
 app.use(logErrors)
+app.use(wrapError)
 app.use(errorHandler)
 
 app.listen(config.port, () => {
