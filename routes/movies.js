@@ -22,7 +22,7 @@ function moviesRouter(app) {
 
 			res.status(200).json({
 				data: movies,
-				message: 'List of Movies'
+				message: 'Movies Listed'
 			})
 		}
 

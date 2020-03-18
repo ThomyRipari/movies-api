@@ -1,9 +1,9 @@
 const assert = require("assert")
 const proxyquire = require("proxyquire")
 
-const { MongoLib, getAllStub, createMovieStub } = require("../utils/mocks/mongoLib")
+const { MongoLib, getAllStub, createMovieStub, updateMovieStub } = require("../utils/mocks/mongoLib")
 
-const { moviesMock, filteredMoviesMock } = require('../utils/mocks/movies')
+const { moviesMock, filteredMoviesMock, IDsMocks } = require('../utils/mocks/movies')
 
 describe("Movies Service", () => {
 	const MoviesService = proxyquire("../services/movies", {
@@ -45,7 +45,21 @@ describe("Movies Service", () => {
 		it("should return created movie when create MongoLib method is called", async () => {
 			const result = await moviesService.createMovie(moviesMock[0])
 			
-			assert.deepEqual(result, moviesMock[0])
+			assert.deepEqual(result, IDsMocks[0])
+		})
+	})
+
+	describe("updateMovie Service method is called", async () => {
+		it("Should call update MongoLib method", async () => {
+			await moviesService.updateMovie(IDsMocks[1], moviesMock[1])
+
+			assert.strictEqual(updateMovieStub.called, true)
+		})
+
+		it("should return updated movie id when update MongoLib method is called", async () => {
+			const result = await moviesService.updateMovie(IDsMocks[1], moviesMock[1])
+
+			assert.deepEqual(result, IDsMocks[1])
 		})
 	})
 })

@@ -2,7 +2,7 @@ const assert = require('assert')
 const proxyquire = require('proxyquire')
 
 /* Mocks */
-const { moviesMock, MoviesServiceMock, filteredMoviesMock } = require('../utils/mocks/movies')
+const { moviesMock, MoviesServiceMock, filteredMoviesMock, IDsMocks } = require('../utils/mocks/movies')
 
 /* Test Server */
 const testServer = require('../utils/testServer')
@@ -23,7 +23,7 @@ describe('Routes - Movies', () => {
 			request.get('/api/movies').end((err, res) => {
 				assert.deepEqual(res.body, {
 					data: moviesMock,
-					message: 'List of Movies'
+					message: 'Movies Listed'
 				})
 			})
 
@@ -35,7 +35,20 @@ describe('Routes - Movies', () => {
 			request.get('/api/movies').send({tags: tags}).end((err, res) => {
 				assert.deepEqual(res.body, {
 					data: filteredMoviesMock(tags),
-					message: 'List of Movies'
+					message: 'Movies Listed'
+				})
+			})
+
+			done()
+		})
+	})
+
+	describe('POST /api/movies', () => {
+		it('should respond with the created movie id', (done) => {
+			request.post('/api/movies').send({...moviesMock[0]}).end((err , res) => {
+				assert.deepEqual(res.body, {
+					data: IDsMocks[0],
+					message: 'Movie Created'
 				})
 			})
 

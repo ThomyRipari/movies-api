@@ -1,6 +1,6 @@
 const sinon = require("sinon")
 
-const { moviesMock, filteredMoviesMock } = require("./movies")
+const { moviesMock, filteredMoviesMock, IDsMocks } = require("./movies")
 
 const getAllStub = sinon.stub()
 
@@ -10,7 +10,10 @@ const tagsQuery = { tags: {$in: 'Drama'} }
 getAllStub.withArgs('movies', tagsQuery).resolves(filteredMoviesMock('Drama'))
 
 const createMovieStub = sinon.stub()
-createMovieStub.resolves(moviesMock[0])
+createMovieStub.resolves(IDsMocks[0])
+
+const updateMovieStub = sinon.stub()
+updateMovieStub.withArgs('movies', IDsMocks[1], moviesMock[1]).resolves(IDsMocks[1])
 
 
 class MongoLib {
@@ -21,10 +24,16 @@ class MongoLib {
 	create(collection, data) {
 		return createMovieStub(collection, data)
 	}
+
+	update(collection, id, movie) {
+		return updateMovieStub(collection, id, movie)
+	}
+
 }
 
 module.exports = {
 	MongoLib,
 	getAllStub,
-	createMovieStub
+	createMovieStub,
+	updateMovieStub
 }
